@@ -36,8 +36,7 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
         const similarity = cosSimilartity(validData[i], validData[j]);
-        // Устанавливаем порог для отображения связи (напр., 0.8)
-        if (similarity > 0.1) {
+        if (similarity === 0.5) {
           links.push({ source: i, target: j, similarity });
         }
       }
@@ -55,8 +54,8 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
 
     // Создание симуляции силы для распределения узлов
     const simulation = d3.forceSimulation(nodes)
-      .force("link", d3.forceLink(links).id((d: any) => d.id).distance(300))
-      .force("charge", d3.forceManyBody().strength(-100))
+      .force("link", d3.forceLink(links).id((d: any) => d.id).distance(200).strength(0.05))
+      .force("charge", d3.forceManyBody().strength(-200))
       .force("center", d3.forceCenter(width / 2, height / 2));
 
     // Добавляем группы для узлов и связей
