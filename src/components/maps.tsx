@@ -36,7 +36,9 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
         const similarity = cosSimilartity(validData[i], validData[j]);
-        links.push({ source: i, target: j, similarity });
+        if (similarity > 0) {
+          links.push({ source: i, target: j, similarity });
+        }
       }
     }
     
@@ -73,7 +75,7 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
 
     nodeElements.append("circle")
       .attr("r", (d: any) => Math.sqrt(d.streams) / 1000 || 5)
-      .attr("fill", _d => d3.interpolateRainbow(Math.random()))
+      .attr("fill", _xd => d3.interpolateRainbow(Math.random()))
       .attr("stroke", "#fff")
       .attr("stroke-width", 1.5);
 

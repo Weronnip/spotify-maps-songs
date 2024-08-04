@@ -10,6 +10,7 @@ export default function CsvReader() {
       download: true,
       header: true,
       delimiter: ",",
+      skipEmptyLines: true,
       complete: (result) => {
           setData(result.data as Songs[]);
           console.log('Parsed Data:', result.data); 
