@@ -36,9 +36,7 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
         const similarity = cosSimilartity(validData[i], validData[j]);
-        if (similarity > 0) {
           links.push({ source: i, target: j, similarity });
-        }
       }
     }
     
