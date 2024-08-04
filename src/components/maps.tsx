@@ -32,12 +32,14 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
     }));
 
     // Создание связей на основе сходства
-    const links: any = [];
+    const links = [];
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
         const similarity = cosSimilartity(validData[i], validData[j]);
-        // Убираем порог сходства, чтобы всегда добавлять связи
-        links.push({ source: i, target: j, similarity });
+        // Устанавливаем порог для отображения связи (напр., 0.8)
+        if (similarity > 0.1) {
+          links.push({ source: i, target: j, similarity });
+        }
       }
     }
 
@@ -53,21 +55,18 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
 
     // Создание симуляции силы для распределения узлов
     const simulation = d3.forceSimulation(nodes)
-      .force("link", d3.forceLink(links).id((d: any) => d.id).distance(150))
-      .force("charge", d3.forceManyBody().strength(-300))
+      .force("link", d3.forceLink(links).id((d: any) => d.id).distance(300))
+      .force("charge", d3.forceManyBody().strength(-100))
       .force("center", d3.forceCenter(width / 2, height / 2));
 
     // Добавляем группы для узлов и связей
     const g = svg.append("g");
 
-    // Отрисовка связей
     const linkElements = g.selectAll("line")
       .data(links)
       .enter().append("line")
-      .attr("stroke", (d: any) => d3.interpolateBlues(d.similarity))
-      .attr("stroke-width", 2);
+      .attr("stroke", d => d3.interpolateBlues(d.similarity))
 
-    // Отрисовка узлов
     const nodeElements = g.selectAll("g.node")
       .data(nodes)
       .enter().append("g")
@@ -75,17 +74,17 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
 
     nodeElements.append("circle")
       .attr("r", (d: any) => Math.sqrt(d.streams) / 1000 || 5)
-      .attr("fill", d3.interpolateRainbow(Math.random()))
+      .attr("fill", _d => d3.interpolateRainbow(Math.random()))
       .attr("stroke", "#fff")
-      .attr("stroke-width", 2);
+      .attr("stroke-width", 1.5);
 
     nodeElements.append("text")
-      .attr("dy", -20)
+      .attr("dy", -10)
       .attr("text-anchor", "middle")
       .text((d: any) => d.track);
 
     nodeElements.append("text")
-      .attr("dy", 20)
+      .attr("dy", 10)
       .attr("text-anchor", "middle")
       .text((d: any) => d.artist)
       .style("font-size", "0.8rem");
@@ -94,14 +93,14 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
     const tooltip = d3.select("body").append("div")
       .attr("class", "tooltip")
       .style("position", "absolute")
-      .style("background-color", "#ffffff4d")
+      .style("background-color", "#a7a7a74e")
       .style("border-radius", "2px")
-      .style("color", "#e9e9e9")
+      .style("color", "#ffffff")
       .style("font-size", "12px")
       .style("padding", "5px")
       .style("display", "none");
 
-    nodeElements.on("mouseover", (event, d:any) => {
+    nodeElements.on("mouseover", (event, d: any) => {
       tooltip.transition().duration(200).style("display", "block");
       tooltip.html(`<strong>Track:</strong> ${d.track}<br><strong>Artist:</strong> ${d.artist}<br><strong>Streams:</strong> ${d.streams}`)
         .style("left", (event.pageX + 5) + "px")
@@ -109,13 +108,13 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
     }).on("mouseout", () => {
       tooltip.transition().duration(500).style("display", "none");
     });
-    // Запуск симуляции
-    simulation.on("tick", async () => {
+
+    simulation.on("tick", () => {
       linkElements
-        .attr("x1", (d: any) => nodes[d.source].x)
-        .attr("y1", (d: any) => nodes[d.source].y)
-        .attr("x2", (d: any) => nodes[d.target].x)
-        .attr("y2", (d: any) => nodes[d.target].y);
+        .attr("x1", d => (nodes[d.source as any].x || 0))
+        .attr("y1", d => (nodes[d.source as any].y || 0))
+        .attr("x2", d => (nodes[d.target as any].x || 0))
+        .attr("y2", d => (nodes[d.target as any].y || 0));
 
       nodeElements
         .attr("transform", (d: any) => `translate(${d.x},${d.y})`);
@@ -124,7 +123,7 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
   }, [data]);
 
   return (
-    <svg ref={svgRef} width="1000px" height="1000px" style={{ border: "1px solid black" }}></svg>
+    <svg ref={svgRef} width="1400px" height="1000px" style={{ border: "1px solid black" }}></svg>
   );
 }
 
