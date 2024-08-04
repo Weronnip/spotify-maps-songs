@@ -36,10 +36,10 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
         const similarity = cosSimilartity(validData[i], validData[j]);
-          links.push({ source: i, target: j, similarity });
+        links.push({ source: i, target: j, similarity });
       }
     }
-
+    
     console.log('Nodes:', nodes);
     console.log('Links:', links);
 
