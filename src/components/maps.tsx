@@ -75,7 +75,7 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
 
     nodeElements.append("circle")
       .attr("r", (d: any) => Math.sqrt(d.streams) / 1000 || 5)
-      .attr("fill", _xd => d3.interpolateRainbow(Math.random()))
+      .attr("fill", _d => d3.interpolateRainbow(Math.random()))
       .attr("stroke", "#fff")
       .attr("stroke-width", 1.5);
 
