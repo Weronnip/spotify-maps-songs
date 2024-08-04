@@ -6,7 +6,7 @@ export default function CsvReader() {
   const [data, setData] = useState<Songs[]>([]);
 
   useEffect(() => {
-    Papa.parse('./MostStreamedSpotifySongs2024.csv', {
+    Papa.parse('../../public/MostStreamedSpotifySongs2024.csv', {
       download: true,
       header: true,
       delimiter: ",",

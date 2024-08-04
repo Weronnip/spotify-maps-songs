@@ -36,9 +36,7 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
         const similarity = cosSimilartity(validData[i], validData[j]);
-        if (similarity === 0.5) {
           links.push({ source: i, target: j, similarity });
-        }
       }
     }
 
@@ -54,8 +52,8 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
 
     // Создание симуляции силы для распределения узлов
     const simulation = d3.forceSimulation(nodes)
-      .force("link", d3.forceLink(links).id((d: any) => d.id).distance(200).strength(0.05))
-      .force("charge", d3.forceManyBody().strength(-200))
+      .force("link", d3.forceLink(links).id((d: any) => d.id).distance(200).strength(0.5))
+      .force("charge", d3.forceManyBody().strength(-500))
       .force("center", d3.forceCenter(width / 2, height / 2));
 
     // Добавляем группы для узлов и связей
@@ -64,7 +62,9 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
     const linkElements = g.selectAll("line")
       .data(links)
       .enter().append("line")
-      .attr("stroke", d => d3.interpolateBlues(d.similarity))
+      .attr("stroke", "#999")
+      .attr("stroke-opacity", 0.6)
+      .attr("stroke-width", 1);
 
     const nodeElements = g.selectAll("g.node")
       .data(nodes)
@@ -110,10 +110,10 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
 
     simulation.on("tick", () => {
       linkElements
-        .attr("x1", d => (nodes[d.source as any].x || 0))
-        .attr("y1", d => (nodes[d.source as any].y || 0))
-        .attr("x2", d => (nodes[d.target as any].x || 0))
-        .attr("y2", d => (nodes[d.target as any].y || 0));
+        .attr("x1", d => (nodes[d.source].x))
+        .attr("y1", d => (nodes[d.source].y))
+        .attr("x2", d => (nodes[d.target].x))
+        .attr("y2", d => (nodes[d.target].y));
 
       nodeElements
         .attr("transform", (d: any) => `translate(${d.x},${d.y})`);
