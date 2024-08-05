@@ -27,16 +27,24 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
     const nodes: any = validData.map((song, index) => ({
       id: index,
       track: song.Track,
+      album_name: song.Album_name,
       artist: song.Artist,
+      isrc: song.ISRC,
+      release_date: song.Release_Date,
       streams: song.Spotify_Streams,
     }));
+
+    
+    console.log('nodes data:', nodes);
 
     // Создание связей на основе сходства
     const links = [];
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
         const similarity = cosSimilartity(validData[i], validData[j]);
-          links.push({ source: i, target: j, similarity });
+        if (similarity > 0.5) {
+          links.push({ source: i, target: j, similarity});
+        }
       }
     }
     
@@ -63,7 +71,7 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
       .data(links)
       .enter().append("line")
       .attr("stroke", "#999")
-      .attr("stroke-opacity", 0.6)
+      .attr("stroke-opacity", 0.8)
       .attr("stroke-width", 1);
 
     const nodeElements = g.selectAll("g.node")
@@ -95,13 +103,15 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
       .style("background-color", "#a7a7a74e")
       .style("border-radius", "2px")
       .style("color", "#ffffff")
-      .style("font-size", "12px")
+      .style("font-size", "15px")
       .style("padding", "5px")
       .style("display", "none");
 
     nodeElements.on("mouseover", (event, d: any) => {
       tooltip.transition().duration(200).style("display", "block");
-      tooltip.html(`<strong>Track:</strong> ${d.track}<br><strong>Artist:</strong> ${d.artist}<br><strong>Streams:</strong> ${d.streams}`)
+      tooltip.html(`<img src=${d.image_songs}>
+                    <strong>Track:</strong> ${d.track} <br><strong>Artist:</strong> ${d.artist}
+                    <br><strong>ISRC:</strong> ${d.isrc} <br><strong>Streams:</strong> ${d.streams}`)
         .style("left", (event.pageX + 5) + "px")
         .style("top", (event.pageY - 28) + "px");
     }).on("mouseout", () => {
