@@ -109,8 +109,7 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
 
     nodeElements.on("mouseover", (event, d: any) => {
       tooltip.transition().duration(200).style("display", "block");
-      tooltip.html(`<img src=${d.image_songs}>
-                    <strong>Track:</strong> ${d.track} <br><strong>Artist:</strong> ${d.artist}
+      tooltip.html(`<strong>Track:</strong> ${d.track} <br><strong>Artist:</strong> ${d.artist}
                     <br><strong>ISRC:</strong> ${d.isrc} <br><strong>Streams:</strong> ${d.streams}`)
         .style("left", (event.pageX + 5) + "px")
         .style("top", (event.pageY - 28) + "px");
