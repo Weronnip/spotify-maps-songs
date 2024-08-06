@@ -3,7 +3,7 @@
 import * as d3 from 'd3';
 import { Songs } from './songs.types';
 import { useRef, useEffect } from 'react';
-import calcLevenshteinSimilarity from './similarity';
+import cosSimilartity from './similarity';
 
 function GraphVisualizer({ data }: { data: Songs[] }) {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -38,13 +38,13 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
     console.log('nodes data:', nodes);
 
     // Создание связей на основе сходства
-    const links = []
-    for (let i = 0; i < nodes.length;  i++) {
-        for (let j = i * 1; j < nodes.length; j++) {
-          const similarity = calcLevenshteinSimilarity(validData[i], validData[j]);
-          if (similarity >= 0.5) {
-            links.push({ source: i, target: j, similarity })
-          }
+    const links = [];
+    for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+            const similarity = cosSimilartity(validData[i], validData[j]);
+            if (similarity > 0.5) { // Использование порогового значения 
+              links.push({ source: i, target: j, similarity });
+            }
         }
     }
     
@@ -135,4 +135,4 @@ function GraphVisualizer({ data }: { data: Songs[] }) {
   );
 }
 
-export default GraphVisualizer; 
+export default GraphVisualizer;

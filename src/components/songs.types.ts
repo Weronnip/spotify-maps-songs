@@ -2,7 +2,7 @@ export type Songs = {
     Track: string;
     Album_name: string;
     Artist: string;
-    Release_Date: Date;
+    Release_Date: number;
     ISRC: string;
     All_Time_Rank: number;
     Track_Score: number;
